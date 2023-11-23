@@ -1,11 +1,15 @@
 import './bootstrap';
-import { createApp } from 'vue/dist/vue.esm-bundler';
-import SampleComponent from './components/SampleComponent.vue';
+import { createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/vue3';
 
-createApp({
-    components: {
-        SampleComponent,
+createInertiaApp({
+    resolve: name => {
+        const pages = import.meta.glob('./Pages/**/*.vue');
+        return pages[`./Pages/${name}.vue`]();
+    },
+    setup({ el, App, props, plugin }) {
+        createApp({ render: () => h(App, props) })
+            .use(plugin)
+            .mount(el);
     }
-}).mount('#app');
-
-console.log(import.meta.env.VITE_APP_HOST);
+});
